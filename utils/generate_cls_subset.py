@@ -84,7 +84,7 @@ preprocess = transforms.Compose([
     transforms.CenterCrop(224),
 ])
 
-def generate_cls_subset(subset_name = 'imagenet30', metadata_file = './aux_files/meta_clsloc.csv', val_ground_truth_file = './aux_files/ILSVRC2015_clsloc_validation_ground_truth.txt'):
+def generate_cls_subset(subset_name = 'imagenet30', metadata_file = './aux_files/meta_clsloc.csv', val_ground_truth_file = './aux_files/ILSVRC2015_clsloc_validation_ground_truth.txt', data_dir = './Data/CLS-LOC'):
     # Function to process a dataset (train or val)
     def process_dataset(split):
         images = []
@@ -93,10 +93,10 @@ def generate_cls_subset(subset_name = 'imagenet30', metadata_file = './aux_files
 
         if split == 'train':
             imageset_file = './aux_files/ImageSets/CLS-LOC/train_cls.txt'
-            images_dir = './Data/CLS-LOC/train'
+            images_dir = os.path.join(data_dir, 'train')
         else:
             imageset_file = './aux_files/ImageSets/CLS-LOC/val.txt'
-            images_dir = './Data/CLS-LOC/val'
+            images_dir = os.path.join(data_dir, 'val')
 
         # Read the image list
         with open(imageset_file, 'r') as f:
