@@ -2,6 +2,10 @@
 temp/
 tmp/
 
+# Data folder
+Data/
+data/
+
 # VSCode settings
 .vscode
 
