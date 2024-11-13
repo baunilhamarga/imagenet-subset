@@ -1,13 +1,12 @@
 import os
 import numpy as np
 from PIL import Image
-import xml.etree.ElementTree as ET
 from torchvision import transforms
 import argparse
 from tqdm import tqdm
 import csv
 
-def generate_metadata(subset_file = './aux_files/imagenet30.txt', mapping_file = '../devkit/data/map_clsloc.txt', output_file = './out_files/metadata.csv'):
+def generate_metadata(subset_file = './aux_files/imagenet30.txt', mapping_file = './aux_files/meta_clsloc.csv', output_file = './out_files/imagenet30_metadata.csv'):
     """
     Generates a metadata CSV file for a subset of ImageNet classes.
 
@@ -17,9 +16,9 @@ def generate_metadata(subset_file = './aux_files/imagenet30.txt', mapping_file =
     for each class in the subset.
 
     Args:
-        subset_file (str): Path to the file containing the subset WNIDs. Default is './aux_files/imagenet30.txt'.
-        mapping_file (str): Path to the mapping file containing WNIDs, original labels, and human-readable labels. Default is '../devkit/data/map_clsloc.txt'.
-        output_file (str): Path to the output CSV file where the metadata will be saved. Default is './out_files/metadata.csv'.
+        subset_file (str): Path to the file containing the subset WNIDs.
+        mapping_file (str): Path to the mapping file containing WNIDs, original labels, and human-readable labels. 
+        output_file (str): Path to the output CSV file where the metadata will be saved.
 
     Raises:
         FileNotFoundError: If the subset file or mapping file does not exist.
@@ -28,8 +27,8 @@ def generate_metadata(subset_file = './aux_files/imagenet30.txt', mapping_file =
     Example:
         generate_metadata(
             subset_file='./aux_files/imagenet30.txt',
-            mapping_file='../devkit/data/map_clsloc.txt',
-            output_file='./out_files/metadata.csv'
+            mapping_file='./aux_files/meta_clsloc.csv',
+            output_file='./out_files/imagenet30_metadata.csv'
         )
     """
     # Ensure the output directory exists
@@ -44,19 +43,13 @@ def generate_metadata(subset_file = './aux_files/imagenet30.txt', mapping_file =
 
     # Read the mapping file and create a list of dictionaries
     mapping_data = []
-    with open(mapping_file, 'r') as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            parts = line.split(' ', 2)
-            if len(parts) < 3:
-                continue  # Skip lines that don't have all three parts
-            wnid, original_label, human_label = parts
+    with open(mapping_file, 'r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
             mapping_data.append({
-                'WNID': wnid,
-                'original_label': original_label,
-                'human_label': human_label
+                'WNID': row['WNID'],
+                'original_label': row['ILSVRC2015_CLSLOC_ID'],
+                'human_label': row['human_label']
             })
 
     # Filter the mapping data for WNIDs in our subset and add subset_label
@@ -91,7 +84,7 @@ preprocess = transforms.Compose([
     transforms.CenterCrop(224),
 ])
 
-def generate_cls_subset(subset_name = 'imagenet30'):
+def generate_cls_subset(subset_name = 'imagenet30', metadata_file = './aux_files/meta_clsloc.csv', val_ground_truth_file = './aux_files/ILSVRC2015_clsloc_validation_ground_truth.txt'):
     # Function to process a dataset (train or val)
     def process_dataset(split):
         images = []
@@ -99,13 +92,11 @@ def generate_cls_subset(subset_name = 'imagenet30'):
         ids = []
 
         if split == 'train':
-            imageset_file = '../ImageSets/CLS-LOC/train_cls.txt'
-            annotations_dir = '../Annotations/CLS-LOC/train'
-            images_dir = '../Data/CLS-LOC/train'
+            imageset_file = './aux_files/ImageSets/CLS-LOC/train_cls.txt'
+            images_dir = './Data/CLS-LOC/train'
         else:
-            imageset_file = '../ImageSets/CLS-LOC/val.txt'
-            annotations_dir = '../Annotations/CLS-LOC/val'
-            images_dir = '../Data/CLS-LOC/val'
+            imageset_file = './aux_files/ImageSets/CLS-LOC/val.txt'
+            images_dir = './Data/CLS-LOC/val'
 
         # Read the image list
         with open(imageset_file, 'r') as f:
@@ -115,21 +106,14 @@ def generate_cls_subset(subset_name = 'imagenet30'):
             img_rel_path = img_info[0]  # e.g., 'n01440764/n01440764_10026' or 'ILSVRC2012_val_00000001'
             img_id = int(img_info[1])   # ID according to the file
 
-            # Determine the image filename and annotation path
+            # Determine the image filename
             if split == 'train':
                 wnid, img_name = img_rel_path.split('/')
                 img_file = os.path.join(images_dir, wnid, img_name + '.JPEG')
             else:
                 img_name = img_rel_path
                 img_file = os.path.join(images_dir, img_name + '.JPEG')
-                annotation_file = os.path.join(annotations_dir, img_name + '.xml')
-                # Parse the annotation XML to get the label (WNID)
-                try:
-                    tree = ET.parse(annotation_file)
-                    root = tree.getroot()
-                    wnid = root.find('object').find('name').text
-                except Exception as e:
-                    raise RuntimeError(f"Error parsing XML for {img_file}: {e}")
+                wnid = label_to_wnid[val_ground_truth[img_id - 1]]
 
             # Check if the WNID is in our subset
             if wnid in subset_wnids:
@@ -144,8 +128,7 @@ def generate_cls_subset(subset_name = 'imagenet30'):
                     labels.append(wnid_to_label[wnid])
                     ids.append(img_id)
                 except Exception as e:
-                    print(f"Error processing image {img_file}: {e}")
-                    continue
+                    raise RuntimeError(f"Error processing image {img_file}: {e}")
 
         # Convert lists to numpy arrays
         images = np.array(images)
@@ -159,6 +142,16 @@ def generate_cls_subset(subset_name = 'imagenet30'):
     # Load the subset WNIDs
     with open(subset_file_path, 'r') as f:
         subset_wnids = [line.strip() for line in f if line.strip()]
+        
+    label_to_wnid = {}
+    with open(metadata_file, 'r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            label_to_wnid[int(row['ILSVRC2015_CLSLOC_ID'])] = row['WNID']
+
+    # Load the ground truth class IDs for validation images
+    with open(val_ground_truth_file, 'r') as f:
+        val_ground_truth = [int(line.strip()) for line in f if line.strip()]
 
     # Create a mapping from WNID to label index (0 to N-1)
     wnid_to_label = {wnid: idx for idx, wnid in enumerate(subset_wnids)}
