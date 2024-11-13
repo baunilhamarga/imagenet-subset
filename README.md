@@ -17,8 +17,6 @@ Generate a classification subset from the complete ImageNet dataset.
 - [Metadata Content](#metadata-content)
 - [Citations](#citations)
 - [License](#license)
-- [Contributing](#contributing)
-- [Contact](#contact)
 
 ## Introduction
 
@@ -68,20 +66,15 @@ This repository provides scripts to generate a classification subset from the co
    ```
    .
    ├── Data
-   │   ├── train
-   │   │   ├── n01440764
-   │   │   │   ├── n01440764_18.JPEG
-   │   │   │   ├── n01440764_19.JPEG
-   │   │   │   └── ...
-   │   │   ├── n01443537
-   │   │   │   ├── n01443537_1.JPEG
-   │   │   │   └── ...
-   │   │   └── ...
-   │   └── val
-   │       ├── ILSVRC2012_val_00000001.JPEG
-   │       ├── ILSVRC2012_val_00000002.JPEG
-   │       ├── ILSVRC2012_val_00000003.JPEG
-   │       └── ...
+   |   └── CLS-LOC
+   │       ├── train
+   │       │   ├── n01440764
+   │       │   │   ├── n01440764_18.JPEG
+   │       │   │   └── ...
+   │       │   └── ...
+   │       └── val
+   │           ├── ILSVRC2012_val_00000001.JPEG
+   │           └── ...
    ```
 
    - **Training Images (`train`):** Organized into subfolders named after the WordNet IDs (WNIDs).
@@ -154,8 +147,6 @@ subset_label,original_id,WNID,human_label
 
 ## Citations
 
-If you use this code or dataset in your research, please cite the following:
-
 **ImageNet Original:**
 
 ```bibtex
@@ -206,5 +197,3 @@ If you use this code or dataset in your research, please cite the following:
 ## TODO
 
 - [ ] Update Docstrings.
-- [ ] Remove .xml annotation dependency.
-- [ ] Include human_label in metadata CSV
