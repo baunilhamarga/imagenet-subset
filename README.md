@@ -32,6 +32,9 @@ This repository provides scripts to generate a classification subset from the co
   - `Pillow`
   - `torchvision`
   - `tqdm`
+  - `argparse`
+  - `matplotlib` (optional)
+  - `pandas` (optional)
 - Sufficient disk space and memory (processing ImageNet can be resource-intensive).
 - Access to the full ImageNet dataset (requires registration at the [ImageNet website](https://www.image-net.org/)).
 
@@ -49,7 +52,7 @@ This repository provides scripts to generate a classification subset from the co
    You can install the required packages using `pip`:
 
    ```bash
-   pip install numpy pillow torchvision tqdm
+   pip install numpy pillow torchvision argparse tqdm matplotlib pandas
    ```
 
 ### Dataset Preparation
@@ -193,7 +196,3 @@ subset_label,original_id,WNID,human_label
 [MIT License](LICENSE)
 
 *Please ensure you comply with the ImageNet terms of use when distributing any part of the dataset.*
-
-## TODO
-
-- [ ] Update Docstrings.
