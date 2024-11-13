@@ -1,3 +1,6 @@
+# Output files
+out_files/
+
 # Temporary files
 temp/
 tmp/
