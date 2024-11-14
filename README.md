@@ -23,6 +23,7 @@ Generate a classification subset from the complete ImageNet dataset.
 This repository provides scripts to generate a classification subset from the complete ImageNet dataset. It allows you to create a custom subset for training or evaluating machine learning models on a smaller, more manageable dataset.
 
 ## Quick Start
+[Video Tutorial [PT-BR]](https://youtu.be/hVz2OxdDlAY)
 
 ### Prerequisites
 
