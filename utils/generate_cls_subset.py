@@ -131,7 +131,7 @@ def generate_cls_subset(subset_name='imagenet30',
                         val_ground_truth_file='./aux_files/ILSVRC2015_clsloc_validation_ground_truth.txt',
                         data_dir='./Data/CLS-LOC'):
     
-    metadata_file = f'./out_files/{subset_name}_metadata.csv'
+    metadata_file = f'./out_files/{subset_name}_cls_metadata.csv'
     # Generate metadata before processing images
     generate_metadata(subset_file=f'./aux_files/{subset_name}.txt',
                       mapping_file='./aux_files/meta_clsloc.csv',
@@ -176,10 +176,6 @@ def generate_cls_subset(subset_name='imagenet30',
              val_id=val_id)
 
     print(f"Processing complete. Data saved to '{output_path}'.")
-
-    # Optionally regenerate metadata if needed
-    # generate_metadata(subset_file=f'./aux_files/{subset_name}.txt',
-    #                   output_file=f'./out_files/{subset_name}_metadata.csv')
 
 if __name__ == '__main__':
     # Parse command line arguments
