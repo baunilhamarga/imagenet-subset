@@ -64,7 +64,7 @@ This repository provides scripts to generate a classification subset from the co
 
 2. **Organize the Data Folder:**
 
-   Place the `Data` folder inside the root directory of this repository. The `Data` folder should have the following structure:
+   Place the `Data` folder inside the root directory of this repository or use the flag `--data_dir` on the [running step](#running-the-script) for other paths. The `Data` folder should have the following structure:
 
    ```
    .
@@ -104,6 +104,10 @@ python main.py --subset_name imagenet30
 ```
 
 - Replace `imagenet30` with the name of your subset file (without the `.txt` extension) if you are using a different file.
+- You can add the flag `--data_dir` to choose a custom Data folder. The path should be to the folder contaning `train` and `val` subfolders, for example:
+```bash
+python main.py --subset_name imagenet30 --data_dir ../ILSVRC/Data/CLS-LOC/
+```
 - After processing, the script will generate a `.npz` file containing your ImageNet subset and a `.csv` metadata file inside the `./out_files` directory.
 
 ## NPZ Content
@@ -132,7 +136,7 @@ To achieve images with consistent dimensions of 224x224 pixels:
 
 A CSV file is generated containing metadata for your subset. This file includes the mapping between your subset labels and the original ImageNet labels.
 
-Sample content of `metadata.csv` for `imagenet30`:
+Sample content of `imagenet30_cls_metadata.csv` for `imagenet30`:
 
 ```
 subset_label,original_id,WNID,human_label
