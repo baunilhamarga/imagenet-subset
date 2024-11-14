@@ -140,18 +140,21 @@ A CSV file is generated containing metadata for your subset. This file includes 
 Sample content of `imagenet30_cls_metadata.csv` for `imagenet30`:
 
 ```
-subset_label,original_id,WNID,human_label
-0,327,n12267677,acorn
-1,230,n02690373,airliner
-2,265,n02701002,ambulance
+subset_label,original_label,WNID,name,description,num_train_images,human_label
+0,327,n12267677,acorn,fruit of the oak tree: a smooth thin-walled nut in a woody cup-shaped base,1300,acorn
+1,230,n02690373,airliner,a commercial airplane that carries passengers,1300,airliner
+2,265,n02701002,ambulance,a vehicle that takes people to and from hospitals,1300,ambulance
 ...
-29,362,n09472597,volcano
+29,362,n09472597,volcano,a mountain formed by volcanic material,1300,volcano
 ```
 
 - **subset_label**: Label index in your subset (from `0` to `num_labels - 1`).
-- **original_id**: Original label ID from ImageNet.
+- **original_label**: Original label ID from ImageNet.
 - **WNID**: WordNet ID.
-- **human_label**: Human-readable label.
+- **name**: Synset from WordNet.
+- **description**: Description of the label.
+- **num_train_images**: Number of training images for the label.
+- **human_label**: Human-readable label using only 1 string with no whitespaces (mostly 1 word, but can be more e.g. `red_wolf`).
 
 ## Citations
 
