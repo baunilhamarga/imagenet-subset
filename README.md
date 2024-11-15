@@ -110,6 +110,7 @@ python main.py --subset_name imagenet30
 python main.py --subset_name imagenet30 --data_dir ../ILSVRC/Data/CLS-LOC/
 ```
 - After processing, the script will generate a `.npz` file containing your ImageNet subset and a `.csv` metadata file inside the `./out_files` directory.
+- You can use the flag `--max_ram` to limit the script RAM usage to a custom amount in GB, but the subset will be divided into multiple `.npz` files.
 
 ## NPZ Content
 
